@@ -115,26 +115,16 @@ favoriteRouter.route('/:dishID')
     res.statusCode = 403;
     res.end('PUT operation not supported on /favorites/'+req.params.dishID);
 })
-.delete(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
-    Favorites.findOne({"user" :req.user._id})
-    .then((favorite) => {
-        if(favorite!=null) {
-            Favorites.findOneAndUpdate({"user":req.user._id},{$pull : {"dishes": { $in: [ req.params.dishID ] }}}, {new: true}, (err, fav) => {
-                if(err) next(err);
-                res.statusCode = 200;
-                res.setHeader('Content-Type', 'text/json');
-                res.end("Succesfully Deleted "+ req.params.dishID);
-            })
-        }
-        else {
-            err = new Error("No favorites exist!!");
-            next(err);
-        }
-    }, (err) => {
-        err = new Error("Dish doesn't exist");
-        next(err);
-    })
-    .catch((err) => next(err));   
+.delete(authenticate.verifyUser, (req, res, next) => {
+    Favorite.findOneAndRemove(
+      { user: req.user._id },
+      { dishes: req.params.dishId})
+    .then((resp) => {
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.json(resp);
+    }, (err) => next(err))
+    .catch((err) => next(err));
 });
 
 module.exports = favoriteRouter;
