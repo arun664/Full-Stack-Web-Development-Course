@@ -74,3 +74,21 @@ body{
     bottom: 0px;
     z-index: 1;
 }
+
+.card {
+    border: 0;
+}
+
+.modal-header {
+    background-color: $background-dark;
+    border: 0;
+    color: white;
+    .close {
+        color: white;
+    }
+}
+
+.modal-body {
+    background-color: $background-pale;
+    border: 0;
+}

@@ -52,3 +52,17 @@ body {
   position: absolute;
   bottom: 0px;
   z-index: 1; }
+
+.card {
+  border: 0; }
+
+.modal-header {
+  background-color: #512DA8;
+  border: 0;
+  color: white; }
+  .modal-header .close {
+    color: white; }
+
+.modal-body {
+  background-color: #D1C4E9;
+  border: 0; }
