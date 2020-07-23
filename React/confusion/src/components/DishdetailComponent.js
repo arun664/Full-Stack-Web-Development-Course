@@ -5,9 +5,6 @@ class DishDetail extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {
-
-        }
     }
 
     renderDish(dish) {
@@ -39,16 +36,14 @@ class DishDetail extends Component {
                                     <Media tag='li'>
                                         <Media body>
                                             <p>{comment.comment}</p>
-                                            <p>{`-- ${comment.author}, ${new Intl.DateTimeFormat({
-                                                dateStyle: 'long'
-                                            }).format(new Date(comment.date))}`}</p>
+                                            <p>{ `${comment.author}, ${new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', 
+                                                day: '2-digit'}).format(new Date(Date.parse(comment.date)))}`}</p>
                                         </Media>
                                     </Media>
                                 </div>
                             )
                         })}
                     </Media>
-
                 </div>
             )
         } else {
@@ -59,7 +54,6 @@ class DishDetail extends Component {
     }
 
     render() {
-        console.log(this.props.comments)
         if(this.props.selectedDish != null) {
             return (
                 <div className="container">
@@ -68,7 +62,7 @@ class DishDetail extends Component {
                             {this.renderDish(this.props.selectedDish)}
                         </div>
                         <div className="col-12 col-md-5 m-1">
-                            {this.renderComments(this.props.comments)}
+                            {this.renderComments(this.props.selectedDish.comments)}
                         </div>
                     </div>
                 </div>
