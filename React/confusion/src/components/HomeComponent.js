@@ -16,7 +16,7 @@ function RenderCard({item, isLoading, errMess}) {
         );
     }
     else 
-        return(
+        return(item?
             <Card>
                 <CardImg src={baseUrl + item.image} alt={item.name} />
                 <CardBody>
@@ -24,7 +24,7 @@ function RenderCard({item, isLoading, errMess}) {
                 {item.designation ? <CardSubtitle>{item.designation}</CardSubtitle> : null }
                 <CardText>{item.description}</CardText>
                 </CardBody>
-            </Card>
+            </Card>:null
         );
 
 }
