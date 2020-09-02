@@ -3,6 +3,7 @@ import { Card, CardImg, CardText, CardBody, CardTitle, Media, Modal, ModalHeader
 import { Link } from 'react-router-dom';
 import { Loading } from './LoadingComponent';
 import { Control, LocalForm, Errors } from 'react-redux-form';
+import { baseUrl } from '../shared/baseUrl';
 
     
     class CommentForm extends Component {
@@ -104,7 +105,7 @@ import { Control, LocalForm, Errors } from 'react-redux-form';
         if (dish != null)
             return(
                 <Card>
-                    <CardImg top src={dish.image} alt={dish.name} />
+                    <CardImg top src={baseUrl + dish.image} alt={dish.name} />
                     <CardBody>
                       <CardTitle>{dish.name}</CardTitle>
                       <CardText>{dish.description}</CardText>
