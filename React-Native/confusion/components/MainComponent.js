@@ -9,6 +9,7 @@ import Home from './HomeComponent'
 import Dishdetail from './DishdetailComponent';
 import Contact from './ContactComponent';
 import About from './AboutComponent';
+import Reservation from './ReservationComponent';
 import { connect } from 'react-redux';
 import { fetchDishes, fetchComments, fetchPromos, fetchLeaders } from '../redux/ActionCreators';
 
@@ -121,6 +122,28 @@ function AboutNavigatorScreen(){
     );
 }
 
+const ReservationNavigator = createStackNavigator();
+
+function ReservationNavigatorScreen(){
+    return(
+        <ReservationNavigator.Navigator
+        InitialRoutename='Reservation'
+        screenOptions={{
+            headerStyle: {
+                backgroundColor: "#512DA8"
+            },
+            headerTintColor: "#fff",
+            headerTitleStyle: {
+                color: "#fff"            
+            }
+        }}>
+            <ReservationNavigator.Screen
+                name="Reservation"
+                component={Reservation}
+            />
+        </ReservationNavigator.Navigator>
+    );
+}
 
 
 function CustomDrawerContentComponent(props) {
@@ -198,7 +221,19 @@ function MainNavigator({ navigation }) {
                 /> 
                 )}} 
             component={AboutNavigatorScreen}
-            />       
+            />    
+            <Drawer.Screen 
+              name="Reservation"
+              options={{drawerIcon: ({ tintColor, focused }) => (
+                  <Icon
+                    name='cutlery'
+                    type='font-awesome'            
+                    size={24}
+                    color={tintColor}
+                  /> 
+                  )}} 
+              component={ReservationNavigatorScreen}
+              />      
         </Drawer.Navigator>
 
     );
