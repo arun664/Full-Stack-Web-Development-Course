@@ -230,8 +230,8 @@ function MainNavigator({ navigation }) {
             name="Login"
             options={{drawerIcon: ({ tintColor, focused }) => (
                 <Icon
-                    name='sign-in'
-                    type='font-awesome'            
+                    name='menu'
+                    iconStyle={{color:'black'}}          
                     size={24}
                     color={tintColor}
                 />
