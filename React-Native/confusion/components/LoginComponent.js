@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, Text, ScrollView, Image } from 'react-native';
+import { View, StyleSheet, Text, ScrollView, Image, Alert } from 'react-native';
 import { Input, CheckBox, Button, Icon } from 'react-native-elements';
 import * as Permissions from 'expo-permissions';
 import * as SecureStore from 'expo-secure-store';
@@ -154,6 +154,28 @@ class RegisterTab extends Component {
       }
     }
 
+    getImageFromGallery = async() => {
+        const cameraRollPermission = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+        if(cameraRollPermission.status !== 'granted')
+            Alert.alert("You have not enabled selected permissions")
+        else {
+            try {
+                let capturedImage = await ImagePicker.launchImageLibraryAsync({
+                  mediaTypes: ImagePicker.MediaTypeOptions.All,
+                  allowsEditing: true,
+                  aspect: [4, 3],
+                  quality: 1,
+                });
+                if (!capturedImage.cancelled) {
+                    console.log(capturedImage);
+                    this.processImage(capturedImage.uri);
+                }
+              } catch (E) {
+                console.log(E);
+              }
+        }    
+    }
+
     processImage = async (imageUri) => {
         let processedImage = await ImageManipulator.manipulateAsync(
             imageUri, 
@@ -199,6 +221,10 @@ class RegisterTab extends Component {
                     <Button
                         title="Camera"
                         onPress={this.getImageFromCamera}
+                        />
+                    <Button
+                        title="Gallery"
+                        onPress={this.getImageFromGallery}
                         />
                 </View>
                 <Input
@@ -273,7 +299,8 @@ const styles = StyleSheet.create({
     imageContainer: {
         flex: 1,
         flexDirection: 'row',
-        margin: 20
+        margin: 20,
+        justifyContent: "space-around"
     },
     image: {
       margin: 10,

@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import { Text, View, StyleSheet, Picker, Switch, Button, ScrollView, Alert } from 'react-native';
-import DatePicker from 'react-native-datepicker';
+import DateTimePicker from "@react-native-community/datetimepicker";
 import * as Animatable from 'react-native-animatable';
 import * as Permissions from 'expo-permissions';
 import * as Notifications from 'expo-notifications';
+import * as Calendar from 'expo-calendar';
 
 class Reservation extends Component {
   constructor(props) {
@@ -11,7 +12,9 @@ class Reservation extends Component {
     this.state = {
       guests: 1,
       smoking: false,
-      date: "",
+      date: new Date(),
+      show: false,
+      mode: 'date'
     };
     this.resetForm = this.resetForm.bind(this);
     this.presentLocalNotification = this.presentLocalNotification.bind(this);
@@ -29,23 +32,65 @@ class Reservation extends Component {
         alert('Hey! You have not enabled selected permissions');
       }
       return permissions;
+  }
+
+  async obtainCalendarPermission() {
+    const { status, expires, permissions } = await Permissions.askAsync(
+      Permissions.CALENDAR
+    );
+    if (status !== 'granted') {
+      alert('Hey! You have not enabled selected permissions');
+    }
+    return permissions;
+  }
+
+  addReservationToCalendar = async ( date ) => {
+    await this.obtainCalendarPermission()
+
+    const defaultCalendarSource = Platform.OS === 'ios' ?
+        await getDefaultCalendarSource()
+        : { isLocalAccount: true, name: 'Expo Calendar' };
+
+    const tempDate = Date.parse(date)
+    const startDate = new Date(tempDate)
+    const endDate = new Date(tempDate + 2 * 60 * 60 * 1000)
+
+    const calendarID = await Calendar.createCalendarAsync({
+        title: 'Expo Calendar',
+        color: 'blue',
+        entityType: Calendar.EntityTypes.EVENT,
+        sourceId: defaultCalendarSource.id,
+        source: defaultCalendarSource,
+        name: 'internalCalendarName',
+        ownerAccount: 'personal',
+        accessLevel: Calendar.CalendarAccessLevel.OWNER,
+    })
+
+    await Calendar.createEventAsync(calendarID, {
+        title: 'Con Fusion Table Reservation',
+        startDate: startDate,
+        endDate: endDate,
+        timeZone: 'Asia/Hong_Kong',
+        location: '121, Clear Water Bay Road, Clear Water Bay, Kowloon, Hong Kong'
+    })
 }
 
-async presentLocalNotification(date) {
-    await this.obtainNotificationPermission();
-    Notifications.presentNotificationAsync({
-        title: 'Your Reservation',
-        body: 'Reservation for '+ date + ' requested',
-        ios: {
-            sound: true
-        },
-        android: {
-            sound: true,
-            vibrate: true,
-            color: '#512DA8'
-        }
-    });
-}
+
+  async presentLocalNotification(date) {
+      await this.obtainNotificationPermission();
+      Notifications.presentNotificationAsync({
+          title: 'Your Reservation',
+          body: 'Reservation for '+ date + ' requested',
+          ios: {
+              sound: true
+          },
+          android: {
+              sound: true,
+              vibrate: true,
+              color: '#512DA8'
+          }
+      });
+  }
 
   handleReservation() {
     Alert.alert(
@@ -69,6 +114,7 @@ async presentLocalNotification(date) {
           text: "OK",
           onPress: () => {
             this.presentLocalNotification(this.state.date);
+            this.addReservationToCalendar(this.state.date);
             this.resetForm();
           },
         },
@@ -81,8 +127,10 @@ async presentLocalNotification(date) {
     this.setState({
       guests: 1,
       smoking: false,
-      date: "",
+      date: new Date(),
       showModal: false,
+      mode: "date",
+      show: false,
     });
   }
 
@@ -118,31 +166,28 @@ async presentLocalNotification(date) {
           </View>
           <View style={styles.formRow}>
             <Text style={styles.formLabel}>Date and Time</Text>
-            <DatePicker
-              style={{ flex: 2, marginRight: 20 }}
-              date={this.state.date}
-              format=""
-              mode="date"
-              placeholder="select date and Time"
-              minDate="2017-01-01"
-              confirmBtnText="Confirm"
-              cancelBtnText="Cancel"
-              customStyles={{
-                dateIcon: {
-                  position: "absolute",
-                  left: 0,
-                  top: 4,
-                  marginLeft: 0,
-                },
-                dateInput: {
-                  marginLeft: 36,
-                },
-                // ... You can check the source to find the other keys.
-              }}
-              onDateChange={(date) => {
-                this.setState({ date: date });
-              }}
-            />
+            <View>
+                    <Button onPress={() => this.setState({show: true})} color="#512DA8" title="Select Date and Time" />
+                </View>
+              {this.state.show && (
+                <DateTimePicker
+                value={this.state.date}
+                mode={this.state.mode}
+                display="default"
+                minimumDate={new Date()}
+                onChange={(selected, value) => {
+                    if (value !== undefined) {
+                    this.setState({
+                        show: this.state.mode === "time" ? false : true,
+                        mode: "time",
+                        date: new Date(selected.nativeEvent.timestamp),
+                    });
+                    } else {
+                    this.setState({ show: false, mode: "date" });
+                    }
+                  }}
+                  />
+                )} 
           </View>
           <View style={styles.formRow}>
             <Button
