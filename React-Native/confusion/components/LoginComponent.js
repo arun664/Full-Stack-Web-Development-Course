@@ -112,7 +112,7 @@ class LoginTab extends Component {
                             color: "blue"
                         }}
                         buttonStyle={{
-                            backgroundColor: ""
+                            backgroundColor: "transparent"
                         }}
                         />
                 </View>
