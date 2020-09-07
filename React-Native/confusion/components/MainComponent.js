@@ -4,6 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
 import { View, Text, Image, StyleSheet, SafeAreaView } from 'react-native';
 import {Icon} from 'react-native-elements';
+import Login from './LoginComponent';
 import Menu from './MenuComponent';
 import Home from './HomeComponent'
 import Dishdetail from './DishdetailComponent';
@@ -56,7 +57,33 @@ function MenuNavigatorScreen(){
         </MenuNavigator.Navigator>
     );
 }
+
+
+const LoginNavigator = createStackNavigator();
+
+function LoginNavigatorScreen(){
+    return(
+        <LoginNavigator.Navigator
+        InitialRoutename='Login'
+        screenOptions={{
+            headerStyle: {
+                backgroundColor: "#512DA8"
+            },
+            headerTintColor: "#fff",
+            headerTitleStyle: {
+                color: "#fff"            
+            }
+        }}>
+            <LoginNavigator.Screen
+                name="Login"
+                component={Login}
+            />
+        </LoginNavigator.Navigator>
+    );
+}
+
 const HomeNavigator = createStackNavigator();
+
 function HomeNavigatorScreen(){
     return(
         <HomeNavigator.Navigator
@@ -77,6 +104,7 @@ function HomeNavigatorScreen(){
         </HomeNavigator.Navigator>
     );
 }
+
 const ContactNavigator = createStackNavigator();
 
 function ContactNavigatorScreen(){
@@ -198,6 +226,18 @@ function MainNavigator({ navigation }) {
         <Drawer.Navigator 
         initialRouteName="Home"
         drawerContent={(props) => <CustomDrawerContentComponent {...props}/>}>
+           <Drawer.Screen 
+            name="Login"
+            options={{drawerIcon: ({ tintColor, focused }) => (
+                <Icon
+                    name='sign-in'
+                    type='font-awesome'            
+                    size={24}
+                    color={tintColor}
+                />
+                )}}
+            component={LoginNavigatorScreen} 
+            />
           <Drawer.Screen 
             name="Home"
             options={{drawerIcon: ({ tintColor, focused }) => (
