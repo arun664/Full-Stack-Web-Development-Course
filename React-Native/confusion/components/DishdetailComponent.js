@@ -24,8 +24,15 @@ function RenderDish(props) {
 
     handleViewRef = ref => this.view = ref;
 
-    const recognizeDrag = ({ moveX, moveY, dx, dy }) => {
+    const recognizeRLDrag = ({ moveX, moveY, dx, dy }) => {
         if ( dx < -200 )
+            return true;
+        else
+            return false;
+    }
+
+    const recognizeLRDrag = ({ moveX, moveY, dx, dy }) => {
+        if ( dx > 200 )
             return true;
         else
             return false;
@@ -40,7 +47,7 @@ function RenderDish(props) {
         },
         onPanResponderEnd: (e, gestureState) => {
             console.log("pan responder end", gestureState);
-            if (recognizeDrag(gestureState))
+            if (recognizeRLDrag(gestureState)) {
                 Alert.alert(
                     'Add Favorite',
                     'Are you sure you wish to add ' + dish.name + ' to favorite?',
@@ -50,7 +57,10 @@ function RenderDish(props) {
                     ],
                     { cancelable: false }
                 );
-
+            }
+            else if(recognizeLRDrag(gestureState)) {
+                props.modalRender()
+            }
             return true;
         }
     })
