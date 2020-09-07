@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, View, ScrollView, FlatList, Modal, StyleSheet, Button, Alert, PanResponder } from 'react-native';
+import { Text, View, ScrollView, FlatList, Modal, StyleSheet, Button, Alert, PanResponder, Share } from 'react-native';
 import { Card, Icon, Rating, Input } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { baseUrl } from '../shared/baseUrl';
@@ -20,9 +20,21 @@ const mapDispatchToProps = dispatch => ({
     postComment: (dishId, rating, author, comment) => dispatch(postComment(dishId, rating, author, comment))
 })
 
+const shareDish = (title, message, url) => {
+    Share.share({
+        title: title,
+        message: title + ': ' + message + ' ' + url,
+        url: url
+    },{
+        dialogTitle: 'Share ' + title
+    })
+}
+
 function RenderDish(props) {
 
-    handleViewRef = ref => this.view = ref;
+    var viewRef;
+
+    const handleViewRef = ref => viewRef = ref;
 
     const recognizeRLDrag = ({ moveX, moveY, dx, dy }) => {
         if ( dx < -200 )
@@ -43,7 +55,7 @@ function RenderDish(props) {
             return true;
         },
         onPanResponderGrant: () => {
-            this.view.rubberBand(1000).then(endState => console.log(endState.finished ? 'finished' : 'cancelled'));
+            this.viewRef.rubberBand(1000).then(endState => console.log(endState.finished ? 'finished' : 'cancelled'));
         },
         onPanResponderEnd: (e, gestureState) => {
             console.log("pan responder end", gestureState);
@@ -71,7 +83,7 @@ function RenderDish(props) {
         if (dish != null) {
             return(
                 <Animatable.View animation="fadeInDown" duration={2000} delay={1000}
-                ref={this.handleViewRef}
+                ref={handleViewRef}
                 {...panResponder.panHandlers}>
                 <Card
                 featuredTitle={dish.name}
@@ -96,6 +108,14 @@ function RenderDish(props) {
                     color='#512DA8'
                     onPress={props.modalRender}
                     />
+                <Icon
+                    raised
+                    reverse
+                    name='share'
+                    type='font-awesome'
+                    color='#51D2A8'
+                    style={styles.cardItem}
+                    onPress={() => shareDish(dish.name, dish.description, baseUrl + dish.image)} />
                 </View>
                 </Card>
                 </Animatable.View>
